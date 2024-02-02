@@ -27,16 +27,17 @@ def when_started1():
                     rover.absorb_radiation(ENEMY)
                 else:
                     drivetrain.turn_to_heading(rover.angle(ENEMY), DEGREES)
+                    drivetrain.drive_for(FORWARD,100,MM)
                     drivetrain.go_to(ENEMY)
             elif rover.battery() < 35 and not drivetrain.is_moving():
                 rover.drop(MINERALS)
                 rover.use(MINERALS)
-            elif rover.sees(MINERALS) or rover.detects(MINERALS):
+            elif rover.sees(MINERALS) or rover.detects(MINERALS) or rover.sees(MINERALS) and not drivetrain.is_moving() or rover.detects(MINERALS) and not drivetrain.is_moving():
                 if rover.minerals_stored() < rover.storage_capacity():
                     drivetrain.turn_to(MINERALS)
                     drivetrain.go_to(MINERALS)
                     rover.pickup(MINERALS)
-                elif rover.battery() > 35 and not drivetrain.is_moving() and rover.sees(MINERALS):
+                elif not drivetrain.is_moving() and rover.get_distance(MINERALS,MM) < 50 or rover.battery() > 35:
                     rover.standby(6)
                     rover.drop(MINERALS)
                     rover.use(MINERALS)
