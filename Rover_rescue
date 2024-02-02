@@ -16,6 +16,10 @@ drivetrain.set_turn_velocity(200, PERCENT)
 def when_started1():
     while True:
         drivetrain.set_heading(0,DEGREES)
+        if rover.under_attack():
+            drivetrain.turn_to(ENEMY)
+            drivetrain.go_to(ENEMY)
+            rover.absorb_radiation(ENEMY)
         if rover.sees(ENEMY) or rover.sees(MINERALS):
             if rover.detects(ENEMY) and rover.battery() > 35:
                 if rover.get_distance(ENEMY, MM) < 3 and rover.sees(ENEMY):
@@ -28,7 +32,7 @@ def when_started1():
                 rover.drop(MINERALS)
                 rover.use(MINERALS)
             elif rover.sees(MINERALS) or rover.detects(MINERALS):
-                if rover.get_distance(MINERALS, MM) > 50 and rover.minerals_stored() < rover.storage_capacity():
+                if rover.minerals_stored() < rover.storage_capacity():
                     drivetrain.turn_to(MINERALS)
                     drivetrain.go_to(MINERALS)
                     rover.pickup(MINERALS)
@@ -37,12 +41,6 @@ def when_started1():
                     rover.drop(MINERALS)
                     rover.use(MINERALS)
                     rover.pickup(MINERALS)
-                else:
-                    drivetrain.turn_to_heading(rover.angle(MINERALS),DEGREES)
-                    drivetrain.go_to(MINERALS)
-                    rover.standby(6)
-                    rover.drop(MINERALS)
-                    rover.use(MINERALS)
                     rover.pickup(MINERALS)
         elif rover.sees(HAZARD) or rover.sees(OBSTACLE):
             drivetrain.turn_to_heading(drivetrain.heading(DEGREES)+330,DEGREES)
