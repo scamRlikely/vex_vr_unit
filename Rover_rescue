@@ -1,0 +1,52 @@
+#region VEXcode Generated Robot Configuration
+import math
+import random
+from vexcode_vr import *
+
+# Brain should be defined by default
+brain=Brain()
+
+drivetrain = Drivetrain("drivetrain", 0)
+rover = Rover("ai", 1)
+distance = Distance("distance", 6)
+
+#endregion VEXcode Generated Robot Configuration
+drivetrain.set_drive_velocity(200, PERCENT)
+drivetrain.set_turn_velocity(200, PERCENT)
+def when_started1():
+    while True:
+        drivetrain.set_heading(0,DEGREES)
+        if rover.sees(ENEMY) or rover.sees(MINERALS):
+            if rover.detects(ENEMY) and rover.battery() > 35:
+                if rover.get_distance(ENEMY, MM) < 3 and rover.sees(ENEMY):
+                    rover.absorb_radiation(ENEMY)
+                    rover.absorb_radiation(ENEMY)
+                else:
+                    drivetrain.turn_to_heading(rover.angle(ENEMY), DEGREES)
+                    drivetrain.go_to(ENEMY)
+            elif rover.battery() < 35 and not drivetrain.is_moving():
+                rover.drop(MINERALS)
+                rover.use(MINERALS)
+            elif rover.sees(MINERALS) or rover.detects(MINERALS):
+                if rover.get_distance(MINERALS, MM) > 50 and rover.minerals_stored() < rover.storage_capacity():
+                    drivetrain.turn_to(MINERALS)
+                    drivetrain.go_to(MINERALS)
+                    rover.pickup(MINERALS)
+                elif rover.battery() > 35 and not drivetrain.is_moving() and rover.sees(MINERALS):
+                    rover.standby(6)
+                    rover.drop(MINERALS)
+                    rover.use(MINERALS)
+                    rover.pickup(MINERALS)
+                else:
+                    drivetrain.turn_to_heading(rover.angle(MINERALS),DEGREES)
+                    drivetrain.go_to(MINERALS)
+                    rover.standby(6)
+                    rover.drop(MINERALS)
+                    rover.use(MINERALS)
+                    rover.pickup(MINERALS)
+        elif rover.sees(HAZARD) or rover.sees(OBSTACLE):
+            drivetrain.turn_to_heading(drivetrain.heading(DEGREES)+330,DEGREES)
+            wait(0.5, SECONDS)
+        elif not rover.sees(MINERALS) or not rover.sees(ENEMY) or not rover.sees(OBSTACLE) or not rover.sees(HAZARD):
+            drivetrain.drive_for(FORWARD,100,MM,wait=False)
+vr_thread(when_started1)
